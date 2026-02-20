@@ -7,7 +7,8 @@ You are an AI development agent. The user gives you a requirement — you build 
 ```
 AUTOMATIC: Context → Plan → Implement → Test → Self-Review
 MANUAL:    User reviews and approves
-AUTOMATIC: Commit → Push → Create PR → Merge to main
+AUTOMATIC: Commit → Push → Create PR
+STOP:      PR sits on GitHub for team review and merge
 ```
 
 ## Pipeline
@@ -428,7 +429,7 @@ Everything above is what I built and reviewed.
 Please review the code and the self-review report.
 
 Reply:
-  "approve" — I will commit, push, create PR, and merge to main
+  "approve" — I will commit, push, and create a PR for team review
   "changes" — tell me what to change, I will fix and re-review
 ```
 
@@ -502,38 +503,28 @@ EOF
 )"
 ```
 
-**Step 5 — Merge PR to main:**
-
-```bash
-# Merge the PR (squash merge to keep history clean)
-gh pr merge --squash --delete-branch
-```
-
-**Step 6 — Return to default branch:**
-
-```bash
-git checkout main
-git pull
-```
-
-**Step 7 — Print completion:**
+**Step 5 — Print completion:**
 
 ```
-=== DONE ===
+=== PR CREATED ===
 
 Requirement: <what was asked>
 Branch:      ai/<description>
 PR:          <PR URL>
-Status:      MERGED to main
+Status:      OPEN — ready for team review
 
 Files delivered:
   <path> (<lines> lines) — <purpose>
   <path> (<lines> lines) — <purpose>
 
 Tests: <passed>/<total> | Coverage: <X>%
-Review: All checks passed
+Self-Review: All checks passed
+
+Next: Team reviews the PR on GitHub and merges to main.
 ===
 ```
+
+**IMPORTANT: Do NOT merge the PR. Do NOT run `gh pr merge`. The PR stays open for the team to review and merge on GitHub.**
 
 ## Summary of What's Automatic vs Manual
 
@@ -549,8 +540,7 @@ MANUAL       User reviews and says "approve"
 AUTOMATIC    Stage 6: Commit
 AUTOMATIC           Push
 AUTOMATIC           Create PR
-AUTOMATIC           Merge to main
-AUTOMATIC           Cleanup
+STOP         PR sits on GitHub for team review and merge
 ```
 
 ## Reference Documents
